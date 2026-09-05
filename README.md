@@ -111,4 +111,4 @@ The next production-oriented addition would be an explicit robot liveness signal
 
 ## AI delegation notes
 
-The implementation was developed interactively with Codex from the supplied requirements and data. No subagents or external services were delegated implementation work. Changes were verified locally with the pytest suite; a full Docker run remains dependent on Docker Desktop's Linux engine being available on the host.
+The implementation was developed interactively with Codex from the supplied requirements and data. No subagents or external services were delegated implementation work. Changes were verified locally with the pytest suite and Docker Compose.
