@@ -11,9 +11,9 @@ services:
       context: .
       dockerfile: backend/Dockerfile
     environment:
-      MQTT_HOST: ${MQTT_HOST:-mqtt}
-      MQTT_PORT: ${MQTT_PORT:-1883}
-      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      MQTT_HOST: mqtt
+      MQTT_PORT: 1883
+      LOG_LEVEL: INFO
     depends_on:
       - mqtt
     ports:
@@ -24,10 +24,10 @@ services:
       context: .
       dockerfile: robots/Dockerfile
     environment:
-      MQTT_HOST: ${MQTT_HOST:-mqtt}
-      MQTT_PORT: ${MQTT_PORT:-1883}
-      REPLAY_SPEED: ${REPLAY_SPEED:-10}
-      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      MQTT_HOST: mqtt
+      MQTT_PORT: 1883
+      REPLAY_SPEED: 1
+      LOG_LEVEL: INFO
     depends_on:
       - mqtt
 
@@ -36,8 +36,8 @@ services:
       context: .
       dockerfile: frontend/Dockerfile
     environment:
-      VITE_API_URL: ${VITE_API_URL:-http://localhost:8000}
-      VITE_WS_URL: ${VITE_WS_URL:-ws://localhost:8000/ws}
+      VITE_API_URL: http://localhost:8000
+      VITE_WS_URL: ws://localhost:8000/ws
     depends_on:
       - backend
     ports:
