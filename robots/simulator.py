@@ -39,7 +39,11 @@ def _publish_event(
     robot_id: str,
     event: dict,
 ) -> bool:
-    """Do not advance the replay until this event has been handed to MQTT at QoS 1."""
+    """Wait for Paho's QoS 1 publish completion before advancing the replay.
+
+    This confirms MQTT publish completion (including the broker acknowledgement),
+    not that the backend application has processed the telemetry.
+    """
     topic = f"robots/{robot_id}/telemetry"
     payload = json.dumps(event, separators=(",", ":"))
     while not stopped.is_set():

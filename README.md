@@ -8,7 +8,7 @@ This local prototype demonstrates the complete flow:
 Robot processes -> MQTT Broker -> Backend -> REST/WebSocket -> Frontend
 ```
 
-The eight robot processes replay the supplied recording. The React screen is deliberately small and is only intended to verify the live system.
+The eight robot processes replay the supplied recording. The React frontend is a live fleet dashboard: it plots robots on a warehouse map, shows their current state with color, and exposes details without maintaining its own copy of fleet state.
 
 ## Architecture
 
@@ -58,7 +58,9 @@ robots/{robot_id}/telemetry
 
 Publishing and the backend subscription use QoS 1 with non-retained messages. The included Mosquitto configuration allows anonymous access solely for local development. It is not production-safe and must not be used as a production security configuration.
 
-QoS 1 is at-least-once delivery, so duplicate deliveries are possible. The backend validates every payload and uses its recorded `t` value to prevent an older delivery from moving a robot's state backwards. Equal timestamps remain accepted, as required by the replay ordering rule.
+QoS 0 is at-most-once delivery and can lose an event; QoS 1 is at-least-once delivery and can duplicate an event; QoS 2 adds an exactly-once handshake with more overhead. This project chooses QoS 1 because telemetry benefits from retryable delivery, while the next newer position normally makes an individual lost sample tolerable. In `robots/simulator.py:_publish_event()`, each process waits up to five seconds for Paho to report that its QoS 1 publish completed before replaying the next event.
+
+That publish completion is MQTT broker-level acknowledgement, not proof that the FastAPI backend has already processed the event. The backend still validates every payload and uses its recorded `t` value to prevent an older delivery from moving a robot's state backwards. Equal timestamps remain accepted, as required by the replay ordering rule. This decision applies to telemetry only: a future safety-critical command flow would need separate acknowledgement, idempotency, retry, and safety semantics rather than relying on telemetry QoS alone.
 
 ## Backend
 
@@ -74,11 +76,18 @@ Fleet state is intentionally in memory and contains no historical event store. A
 
 REST and WebSocket share the same fleet state; no second WebSocket-specific state exists.
 
+## Frontend dashboard
+
+The dashboard in `frontend/src/App.jsx` uses a fixed 900 by 560 facility map. The map origin is the top-left corner at `(0, 0)`, and the grid uses one pixel per coordinate unit. The six grey obstacle blocks reproduce the supplied warehouse layout. A robot marker uses its live telemetry `(x, y)` position as soon as telemetry exists; otherwise it is shown at the recorded `start` position from `robots.json`.
+
+Marker, sidebar, and legend colors are consistent for every status: idle is grey, active blue, on mission purple, charging gold, blocked orange, error red, maintenance violet, and offline dark grey. Hovering or keyboard-focusing a marker opens a compact detail box with the robot ID, type, status, position, and battery. Selecting a marker opens the sidebar with the essential current information plus its recorded start position; it intentionally excludes the raw recording timestamp from the main operator view.
+
 ## Design decisions
 
 - `FleetState` is an in-memory, lock-protected latest-event dictionary. This keeps REST snapshots and WebSocket broadcasts consistent without retaining unneeded event history.
 - MQTT QoS 1 is used for at-least-once robot telemetry. The backend validates messages and rejects events older than the state held for that robot; exact duplicate delivery can still produce a harmless equal-timestamp update.
 - The supplied recording is replayed exactly and no connectivity or telemetry values are fabricated. In particular, “reporting” in the frontend is not claimed to be a robot health check.
+- The frontend treats the backend as authoritative. `GET /robots` establishes the initial state, WebSocket events move the map markers live, and `GET /robots/roster` supplies the immutable type/start-position metadata.
 
 ## Reconnection
 
