@@ -1,0 +1,26 @@
+:root { font-family: Inter, ui-sans-serif, system-ui, sans-serif; color: #e7eef6; background: #08111f; }
+* { box-sizing: border-box; }
+body { margin: 0; min-width: 320px; }
+main { max-width: 1200px; margin: 0 auto; padding: 46px 24px 64px; }
+header { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; margin-bottom: 30px; }
+.eyebrow { color: #73d7bb; font-size: .74rem; font-weight: 700; letter-spacing: .13em; margin: 0 0 8px; }
+h1 { font-size: clamp(2rem, 5vw, 3.4rem); line-height: 1; margin: 0; letter-spacing: -.045em; }
+.flow { color: #9bb0c7; margin: 13px 0 0; }
+.dashboard-status { align-items: flex-end; display: flex; flex-direction: column; gap: 9px; }
+.connection { border: 1px solid #405168; border-radius: 99px; color: #b9c6d6; font-size: .84rem; font-weight: 700; padding: 9px 13px; white-space: nowrap; }
+.connection.live { background: #0b453f; border-color: #2cae91; color: #87f0d3; }
+.telemetry-summary { color: #9bb0c7; font-size: .78rem; margin: 0; white-space: nowrap; }
+.error { background: #4d252e; border: 1px solid #b75162; border-radius: 8px; color: #ffc7cf; margin: 0 0 20px; padding: 12px; }
+.robot-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+.robot-card { background: #101d2e; border: 1px solid #273b54; border-radius: 14px; padding: 20px; min-height: 180px; }
+.card-heading { align-items: center; display: flex; justify-content: space-between; gap: 10px; margin-bottom: 19px; }
+h2 { font-size: 1.25rem; margin: 0; }
+.robot-type { color: #91a4ba; font-size: .76rem; margin: 3px 0 0; text-transform: uppercase; }
+.card-heading span { background: #183650; border-radius: 99px; color: #8ed5ff; font-size: .72rem; font-weight: 700; padding: 6px 8px; text-transform: uppercase; }
+.start { color: #b9c6d6; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .78rem; margin: -5px 0 18px; }
+dl { display: grid; gap: 15px; margin: 0; }
+dl div { align-items: baseline; display: flex; justify-content: space-between; gap: 12px; }
+dt { color: #91a4ba; font-size: .78rem; }
+dd { color: #edf5ff; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .82rem; margin: 0; }
+.empty { color: #91a4ba; font-size: .9rem; margin: 30px 0 0; }
+@media (max-width: 600px) { header { flex-direction: column; } .dashboard-status { align-items: flex-start; } main { padding: 30px 16px; } }
